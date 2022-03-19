@@ -55,6 +55,15 @@ io.on("connection", (socket) => {
     }
   );
 
+  socket.on("videoOther", (data) => {
+    io.to(data.socketId).emit("videoOther", data.status);
+  });
+  socket.on("startCount", (data) => {
+    io.to(data.socketId).emit("startCount", data.status);
+  });
+  socket.on("missCall", (data) => {
+    io.to(data.socketId).emit("missCall", data);
+  });
   socket.on("answerCall", (data) => {
     io.to(data.to).emit("callAccepted", data.signal);
   });
@@ -81,6 +90,37 @@ io.on("connection", (socket) => {
   });
   socket.on("stopInput", (data) => {
     io.to(data.socketId).emit("stopInput", data);
+  });
+
+  socket.on("callGroup", (data) => {
+    console.log(data.signalData);
+    data.socketIds.forEach((socketId) => {
+      io.to(socketId.socketId).emit("callGroup", data);
+    });
+  });
+  socket.on("answerCallGroup", (data) => {
+    io.to(data.to).emit("callAcceptedGroup", data);
+  });
+
+  socket.on("joinGroup", (data) => {
+    console.log("join group", data);
+    data.allMembers.forEach((member) => {
+      if (member.userId !== data.userJoin)
+        io.to(member.socketId).emit("joinGroup", data);
+    });
+  });
+  socket.on("participants", (data) => {
+    data.allMembers.forEach((member) => {
+      // if (member.userId !== data.userJoin)
+      io.to(member.socketId).emit("participants", data);
+    });
+  });
+
+  socket.on("endCallGroup", (data) => {
+    console.log("end call group", data);
+    data.forEach((member) => {
+      io.to(member.socketId).emit("endCallGroup", data);
+    });
   });
 });
 
