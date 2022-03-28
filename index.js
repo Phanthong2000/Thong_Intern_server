@@ -84,6 +84,12 @@ io.on("connection", (socket) => {
   socket.on("deleteRequestAddFriend", (data) => {
     io.to(data.socketId).emit("deleteRequestAddFriend", data);
   });
+  socket.on("confirmRequestAddFriend", (data) => {
+    io.to(data.socketId).emit("confirmRequestAddFriend", data);
+  });
+  socket.on("unFriend", (data) => {
+    io.to(data.socketId).emit("unFriend", data);
+  });
   socket.on("sendMessage", (data) => {
     io.to(data.socketId).emit("sendMessage", data);
   });
@@ -268,6 +274,15 @@ io.on("connection", (socket) => {
   socket.on("invite like page", (data) => {
     data.socketIds.forEach((socketId) => {
       io.to(socketId.socketId).emit("invite like page", {
+        userId: socketId.userId,
+        page: data.page,
+        userInvite: data.userInvite,
+      });
+    });
+  });
+  socket.on("invite join group", (data) => {
+    data.socketIds.forEach((socketId) => {
+      io.to(socketId.socketId).emit("invite join group", {
         userId: socketId.userId,
         page: data.page,
         userInvite: data.userInvite,
